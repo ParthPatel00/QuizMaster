@@ -7,23 +7,56 @@ const Home = () => {
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      setFile(event.target.files[0]);
+      const fileUploaded = event.target.files[0];
+
+      // File size has to be less than 5 MB (unsure about this calculation)
+      if (fileUploaded.size > 5 * 1024 * 1024) {
+        setErrorMessage("File size must be less than 5MB");
+        setFile(null);
+        // console.log("file is larger than 5mb");
+      } else {
+        setErrorMessage("");
+        setFile(fileUploaded);
+        // console.log(
+        //   "File uploaded: ",
+        //   fileUploaded.name,
+        //   "Size: ",
+        //   fileUploaded.size
+        // );
+      }
     }
   };
 
   const handleSubmit = () => {
+    // this regex allows spaces only, not good
+    // const alphanumeric = /^[a-zA-Z0-9\s]+$/;
+    const alphanumeric = /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s]+$/;
+
     if (!quizName || !file) {
-      alert("Please enter a quiz name and upload a PDF.");
+      setErrorMessage("Please enter a quiz name and upload a PDF");
+      console.log("Please enter a quiz name and upload a PDF");
       return;
+    } else if (!alphanumeric.test(quizName)) {
+      setErrorMessage(
+        "Quiz name must contain only letters, numbers, and spaces"
+      );
+      console.log("Quiz name must contain only letters, numbers, and spaces");
+      return;
+    } else {
+      setErrorMessage("");
+      console.log("Quiz name: ", quizName, "File: ", file.name);
     }
-    console.log("Quiz name: ", quizName, "File: ", file.name);
   };
   // Hook declarations
   //  If showForm, show the input and upload button
   const [showForm, setShowForm] = useState(false);
   // Storing name of quiz
   const [quizName, setQuizName] = useState("");
+  // Storing file
   const [file, setFile] = useState<File | null>(null);
+  // Storint error if invalid inputs are provided
+  const [errorMessage, setErrorMessage] = useState("");
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="text-4xl font-bold mb-4"> Introducing QuizMaster</h1>
@@ -71,7 +104,6 @@ const Home = () => {
                 id="quizName"
               ></input>
             </div>
-
             {/*Div for file label and input */}
             <div className="flex items-center space-x-2">
               <label
@@ -89,7 +121,10 @@ const Home = () => {
                 id="fileUpload"
               ></input>
             </div>
-
+            {/* Display error message */}
+            {errorMessage && (
+              <p className="text-red-500 font-medium">{errorMessage}</p>
+            )}
             <Button className="w-full" onClick={handleSubmit}>
               Generate Quiz
             </Button>
