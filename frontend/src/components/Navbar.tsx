@@ -26,7 +26,55 @@ const Navbar = () => {
               <Bars3Icon className="h-6 w-6 text-white-800" />
             )}
           </button>
+          {/*/ The main options on the navbar */}
+          <div className="hidden lg:flex space-x-6">
+            <Link to="/my-quizzes" className="hover:underline">
+              My Quizzes
+            </Link>
+            <Link to="/my-documents" className="hover:underline">
+              My Documents
+            </Link>
+            <Link to="/signup" className="hover:underline">
+              Sign up
+            </Link>
+            <Link to="/login" className="hover:underline">
+              Login
+            </Link>
+          </div>
         </div>
+        {/*/ Dropdown menu for small and medium devices  (when isOpen is true)*/}
+        {isOpen && (
+          <div className="lg:hidden flex flex-col mt-2 space-y-2 bg-blue-700 p-4 rounded-md">
+            <Link
+              to="/my-documents"
+              className="hover:underline p-3 border-1 rounded-md"
+              onClick={() => setIsOpen(false)}
+            >
+              My Documents
+            </Link>
+            <Link
+              to="/my-quizzes"
+              className="hover:underline p-3 border-1 rounded-md"
+              onClick={() => setIsOpen(false)}
+            >
+              My Quizzes
+            </Link>
+            <Link
+              to="/signup"
+              className="hover:underline p-3 border-1 rounded-md"
+              onClick={() => setIsOpen(false)}
+            >
+              Sign up
+            </Link>
+            <Link
+              to="/login"
+              className="hover:underline p-3 border-1 rounded-md"
+              onClick={() => setIsOpen(false)}
+            >
+              Login
+            </Link>
+          </div>
+        )}
       </div>
     </nav>
   );
