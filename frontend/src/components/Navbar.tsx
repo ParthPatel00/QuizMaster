@@ -5,6 +5,12 @@ import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
 const Navbar = () => {
   // For toggling menu bar
   const [isOpen, setIsOpen] = useState(false);
+
+  // When loggedIn true, user has loggin in, the navbar
+  // will look different when logged in, compared to when not
+  // logged in.
+  // Will implement toggling this feature in the future
+  const [loggedIn, setLoggedIn] = useState(false);
   return (
     <nav>
       <div className="p-4 bg-blue-600 text-white">
