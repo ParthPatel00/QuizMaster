@@ -1,10 +1,21 @@
 import { useState } from "react";
 import Button from "./ui/Button";
 import Card from "./ui/Card";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  // Helper functions
+  // Hook declarations
+  //  If showForm, show the input and upload button
+  const [showForm, setShowForm] = useState(false);
+  // Storing name of quiz
+  const [quizName, setQuizName] = useState("");
+  // Storing file
+  const [file, setFile] = useState<File | null>(null);
+  // Storint error if invalid inputs are provided
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
+  // Helper functions
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const fileUploaded = event.target.files[0];
@@ -45,17 +56,14 @@ const Home = () => {
     } else {
       setErrorMessage("");
       console.log("Quiz name: ", quizName, "File: ", file.name);
+
+      // Need to generate a quizID somehow since each quiz is unique.
+      // For now, choosing a random number, but need to look up
+      // how to do this.
+      const quizId = Math.floor(Math.random() * 10000).toString();
+      navigate(`/quiz/${quizId}`);
     }
   };
-  // Hook declarations
-  //  If showForm, show the input and upload button
-  const [showForm, setShowForm] = useState(false);
-  // Storing name of quiz
-  const [quizName, setQuizName] = useState("");
-  // Storing file
-  const [file, setFile] = useState<File | null>(null);
-  // Storint error if invalid inputs are provided
-  const [errorMessage, setErrorMessage] = useState("");
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
