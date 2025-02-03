@@ -1,6 +1,7 @@
 import Card from "../components/ui/Card";
 import { useState } from "react";
 import Button from "../components/ui/Button";
+import { useNavigate } from "react-router-dom";
 
 // Moch data for the quiz. In the future this will be replaced by data from the API response
 const quizData = {
@@ -36,6 +37,9 @@ const QuizPage = () => {
   }>({});
   const [submitted, setSubmitted] = useState(false);
   const [submissionError, setSubmissionError] = useState("");
+  const [score, setScore] = useState<number | null>(null);
+  const navigate = useNavigate();
+
   // Helper functions
   const handleSelectAnswer = (questionId: number, option: string) => {
     // Whichever option is selected, update/insert the questionId: option
@@ -53,17 +57,27 @@ const QuizPage = () => {
       );
       console.log(submissionError);
     } else {
+      let scoreCount = 0;
+      quizData.questions.forEach((q) => {
+        if (selectedAnswers[q.id] == q.correctAnswer) {
+          scoreCount += 1;
+        }
+      });
       setSubmissionError("");
       setSubmitted(true);
+      setScore(scoreCount);
     }
   };
 
   const handleRetake = () => {
     setSelectedAnswers({});
     setSubmitted(false);
+    setScore(null);
   };
 
-  const returnHomePage = () => {};
+  const returnHomePage = () => {
+    navigate("/");
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -80,25 +94,30 @@ const QuizPage = () => {
             </h2>
             <div className="flex flex-col space-y-2 mt-2">
               {q.options.map((option) => {
+                // Only mark the option as incorrect if its not correct, is selected, and the quiz has been submittted
                 const isSelected = selectedAnswers[q.id] === option;
                 const isCorrect = option === q.correctAnswer;
-                // Only mark the option as incorrect if its not correct, is selected, and the quiz has been submittted
-                const isIncorrect = !isCorrect && isSelected && submitted;
+                const isIncorrect = isSelected && !isCorrect && submitted;
+                console.log(
+                  option,
+                  submitted && isCorrect,
+                  submitted && isIncorrect
+                );
                 return (
                   <button
                     key={option}
-                    className={`p-2 border rounded-md text-left ${
-                      isSelected ? "bg-blue-200" : "bg-white"
-                    }
-                      ${
-                        submitted
-                          ? isCorrect
-                            ? "bg-green-300"
-                            : isIncorrect
-                            ? "bg-red-300"
-                            : ""
-                          : ""
-                      }`}
+                    className={`p-2 border rounded-md text-left 
+                        ${
+                          submitted
+                            ? isCorrect
+                              ? "bg-green-200" // highlight answer in green if correct, no matter what
+                              : isIncorrect
+                              ? "bg-red-200" // if incorrect, then red
+                              : "bg-white"
+                            : isSelected
+                            ? "bg-blue-200" // if quiz hasn't been submitted, blue if selected, white if not
+                            : "bg-white"
+                        }`}
                     onClick={() => handleSelectAnswer(q.id, option)}
                     disabled={submitted}
                   >
@@ -118,6 +137,17 @@ const QuizPage = () => {
           <div className="flex flex-col items-center justify-center p-4">
             <p className="text-lg font-semibold text-center mt-4">
               Quiz submitted! Correct answers are highlighted
+            </p>
+            <p
+              className={`text-2xl font-bold mt-2 p-4 rounded-lg shadow-md ${
+                score && score === quizData.questions.length
+                  ? "bg-green-200 text-green-800" // Perfect Score
+                  : score && score >= quizData.questions.length / 2
+                  ? "bg-yellow-200 text-yellow-800" // Average Score
+                  : "bg-red-200 text-red-800" // Low Score
+              }`}
+            >
+              Your Score: {score} / {quizData.questions.length}
             </p>
             <div className="flex space-x-4 mt-4">
               <Button onClick={handleRetake}>Retake Quiz</Button>
