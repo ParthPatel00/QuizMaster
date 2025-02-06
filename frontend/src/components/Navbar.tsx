@@ -4,6 +4,7 @@ import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
 import { useAuth } from "../hooks/useAuth";
 import Button from "./ui/Button";
 import { logOut } from "../services/authService";
+import defaultUserPhoto from "../assets/user.png";
 
 const Navbar = () => {
   const { user } = useAuth();
@@ -23,7 +24,7 @@ const Navbar = () => {
           {/* Logo/Name of the website. Clicking this should route
         user to the home page*/}
           <Link to="/" className="text-2xl font-bold">
-            QuizMaster
+            QuizMaster 🧠
           </Link>
           {/* Menu button for that should only show for tablet and smaller devices*/}
           <button
@@ -41,12 +42,17 @@ const Navbar = () => {
           <div className="hidden lg:flex space-x-6">
             {user ? (
               <>
-                <Link to="/my-quizzes" className="hover:underline">
+                <Link to="/my-quizzes" className="hover:underline my-auto">
                   My Quizzes
                 </Link>
-                <Link to="/my-documents" className="hover:underline">
+                <Link to="/my-documents" className="hover:underline my-auto">
                   My Documents
                 </Link>
+                <img
+                  src={user.photoURL || defaultUserPhoto}
+                  alt="User Avatar"
+                  className="w-10 h-10 rounded-full border-2 border-white mr-4"
+                ></img>
                 <button
                   className="bg-red-500 px-3 py-1 rounded-lg hover:bg-red-700 transition"
                   onClick={logOut}
@@ -56,11 +62,8 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link to="/signup" className="hover:underline">
-                  Sign up
-                </Link>
                 <Link to="/login" className="hover:underline">
-                  Login
+                  Signup/Login
                 </Link>
               </>
             )}
@@ -83,6 +86,11 @@ const Navbar = () => {
             >
               My Quizzes
             </Link>
+            <img
+              src={user.photoURL || defaultUserPhoto}
+              alt="User Avatar"
+              className="w-10 h-10 rounded-full border-2 border-white self-center"
+            ></img>
             <button
               className="bg-red-500 px-3 py-1 rounded-lg hover:bg-red-700 transition"
               onClick={logOut}
@@ -94,18 +102,11 @@ const Navbar = () => {
         {isOpen && !user && (
           <div className="lg:hidden flex flex-col mt-2 space-y-2 bg-blue-700 p-4 rounded-md">
             <Link
-              to="/signup"
-              className="hover:underline p-3 border-1 rounded-md"
-              onClick={() => setIsOpen(false)}
-            >
-              Sign up
-            </Link>
-            <Link
               to="/login"
               className="hover:underline p-3 border-1 rounded-md"
               onClick={() => setIsOpen(false)}
             >
-              Login
+              Signup/Login
             </Link>
           </div>
         )}

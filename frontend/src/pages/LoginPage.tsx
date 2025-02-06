@@ -18,7 +18,9 @@ const LoginPage = () => {
       await signIn(email, password);
       setPopup("Signed in successfully! ✅");
     } catch (error) {
-      setPopup("Error occured during sign in 😥");
+      setPopup(
+        'Error occured during sign in 😥 Click "Sign Up" if its your first time'
+      );
     }
   };
 
@@ -28,7 +30,9 @@ const LoginPage = () => {
       setPopup("Signed up successfully! ✅");
       navigate("/");
     } catch (error) {
-      setPopup("Error occured during sign up 😥");
+      setPopup(
+        "Error occured during sign up 😥 Ensure password is at least 8 characters long"
+      );
       setEmail("");
       setPassword("");
     }
@@ -57,14 +61,20 @@ const LoginPage = () => {
         )}
 
         <div className="space-y-4">
-          {/* Name input box */}
-          <input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
-          ></input>
+          {/* Google sign in button */}
+          <button
+            onClick={handleGoogleSignIn}
+            className="w-full flex items-center justify-center bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 p-3 rounded-lg font-semibold transition"
+          >
+            <FcGoogle className="text-xl mr-2" />
+            Sign in with Google
+          </button>
+          <div className="flex items-center my-4">
+            <hr className="flex-grow border-gray-300" />
+            <span className="px-2 text-gray-500 text-sm">OR</span>
+            <hr className="flex-grow border-gray-300" />
+          </div>
+
           {/* Email input box */}
           <input
             type="email"
@@ -94,15 +104,6 @@ const LoginPage = () => {
             className="w-full bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg font-semibold transition"
           >
             Sign Up
-          </button>
-
-          {/* Google sign in button */}
-          <button
-            onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 p-3 rounded-lg font-semibold transition"
-          >
-            <FcGoogle className="text-xl mr-2" />
-            Sign in with Google
           </button>
         </div>
       </div>
