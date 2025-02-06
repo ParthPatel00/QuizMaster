@@ -2,6 +2,7 @@ import { useState } from "react";
 import Button from "./ui/Button";
 import Card from "./ui/Card";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Home = () => {
   // Hook declarations
@@ -14,6 +15,7 @@ const Home = () => {
   // Storint error if invalid inputs are provided
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Helper functions
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,6 +70,9 @@ const Home = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="text-4xl font-bold mb-4"> Introducing QuizMaster</h1>
+      <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-400 to-purple-600 text-transparent bg-clip-text animate-pulse p-5 mb-3">
+        Welcome, {user?.displayName || "Quiz-Amateur"}
+      </h1>
       <h2 className="text-2xl text-blue-600 font-bold mb-2">
         What is QuizMaster?
       </h2>
@@ -82,6 +87,14 @@ const Home = () => {
         document you want to be quized in, and effortlessly generate a quiz in
         minutes!
       </p>
+      <h2 className="text-2xl text-blue-600 font-bold mb-2">
+        Want to save your Quizzes?
+      </h2>
+      <p className="text-lg text-center max-w-xl mb-6">
+        Signup/Login to save the documents you upload, and the quizzes you
+        generate. You can retake saved quizzes, share them, or delete them
+        anytime!
+      </p>
 
       <Button
         className="px-6 py-3 test-lg"
@@ -93,7 +106,7 @@ const Home = () => {
       {/* If the button is clicked show a form
       containing the input and upload file button */}
       {showForm && (
-        <Card className="mt-6 p-4 w-full max-w-lg">
+        <Card className="mt-6 mb-20 p-4 w-full max-w-lg">
           <div className="p-2 flex flex-col space-y-4">
             {/* Div for text field label and input w*/}
             <div className="flex items-center space-x-2">
