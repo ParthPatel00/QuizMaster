@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
 import { useAuth } from "../hooks/useAuth";
+import Button from "./ui/Button";
+import { logOut } from "../services/authService";
 
 const Navbar = () => {
   const { user } = useAuth();
@@ -45,6 +47,12 @@ const Navbar = () => {
                 <Link to="/my-documents" className="hover:underline">
                   My Documents
                 </Link>
+                <button
+                  className="bg-red-500 px-3 py-1 rounded-lg hover:bg-red-700 transition"
+                  onClick={logOut}
+                >
+                  Logout
+                </button>
               </>
             ) : (
               <>
@@ -75,6 +83,12 @@ const Navbar = () => {
             >
               My Quizzes
             </Link>
+            <button
+              className="bg-red-500 px-3 py-1 rounded-lg hover:bg-red-700 transition"
+              onClick={logOut}
+            >
+              Logout
+            </button>
           </div>
         )}
         {isOpen && !user && (

@@ -1,17 +1,13 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import {
-  signIn,
-  signUp,
-  signInWithGoogle,
-  logOut,
-} from "../services/authService";
+import { signIn, signUp, signInWithGoogle } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   // Hook declarations
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [popup, setPopup] = useState("");
   const navigate = useNavigate();
 
@@ -20,7 +16,7 @@ const LoginPage = () => {
   const handleSignIn = async () => {
     try {
       await signIn(email, password);
-      setPopup("Signed in successfully!");
+      setPopup("Signed in successfully! ✅");
     } catch (error) {
       setPopup("Error occured during sign in 😥");
     }
@@ -29,12 +25,22 @@ const LoginPage = () => {
   const handleSignUp = async () => {
     try {
       await signUp(email, password);
-      setPopup("Signed up successfully!");
+      setPopup("Signed up successfully! ✅");
       navigate("/");
     } catch (error) {
       setPopup("Error occured during sign up 😥");
       setEmail("");
       setPassword("");
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+      setPopup("Signed in With Google! ✅ ");
+      navigate("/");
+    } catch (error) {
+      setPopup("Error during Google sign-in 😥");
     }
   };
 
@@ -51,6 +57,14 @@ const LoginPage = () => {
         )}
 
         <div className="space-y-4">
+          {/* Name input box */}
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          ></input>
           {/* Email input box */}
           <input
             type="email"
@@ -84,7 +98,7 @@ const LoginPage = () => {
 
           {/* Google sign in button */}
           <button
-            onClick={signInWithGoogle}
+            onClick={handleGoogleSignIn}
             className="w-full flex items-center justify-center bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 p-3 rounded-lg font-semibold transition"
           >
             <FcGoogle className="text-xl mr-2" />
