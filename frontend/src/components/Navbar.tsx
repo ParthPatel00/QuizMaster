@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
+import { useAuth } from "../hooks/useAuth";
 
 const Navbar = () => {
+  const { user } = useAuth();
+
   // For toggling menu bar
   const [isOpen, setIsOpen] = useState(false);
 
@@ -34,22 +37,29 @@ const Navbar = () => {
           </button>
           {/*/ The main options on the navbar */}
           <div className="hidden lg:flex space-x-6">
-            <Link to="/my-quizzes" className="hover:underline">
-              My Quizzes
-            </Link>
-            <Link to="/my-documents" className="hover:underline">
-              My Documents
-            </Link>
-            <Link to="/signup" className="hover:underline">
-              Sign up
-            </Link>
-            <Link to="/login" className="hover:underline">
-              Login
-            </Link>
+            {user ? (
+              <>
+                <Link to="/my-quizzes" className="hover:underline">
+                  My Quizzes
+                </Link>
+                <Link to="/my-documents" className="hover:underline">
+                  My Documents
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/signup" className="hover:underline">
+                  Sign up
+                </Link>
+                <Link to="/login" className="hover:underline">
+                  Login
+                </Link>
+              </>
+            )}
           </div>
         </div>
         {/*/ Dropdown menu for small and medium devices  (when isOpen is true)*/}
-        {isOpen && (
+        {isOpen && user && (
           <div className="lg:hidden flex flex-col mt-2 space-y-2 bg-blue-700 p-4 rounded-md">
             <Link
               to="/my-documents"
@@ -65,6 +75,10 @@ const Navbar = () => {
             >
               My Quizzes
             </Link>
+          </div>
+        )}
+        {isOpen && !user && (
+          <div className="lg:hidden flex flex-col mt-2 space-y-2 bg-blue-700 p-4 rounded-md">
             <Link
               to="/signup"
               className="hover:underline p-3 border-1 rounded-md"
