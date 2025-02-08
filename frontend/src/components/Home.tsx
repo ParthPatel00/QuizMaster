@@ -4,7 +4,15 @@ import Card from "./ui/Card";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
+const BUCKET_NAME = "quizmaster-pdf-uploads";
+
 const Home = () => {
+  interface params {
+    Bucket: string;
+    Key: string;
+    Body: File;
+    ContentType: string;
+  }
   // Hook declarations
   //  If showForm, show the input and upload button
   const [showForm, setShowForm] = useState(false);
@@ -14,6 +22,10 @@ const Home = () => {
   const [file, setFile] = useState<File | null>(null);
   // Storint error if invalid inputs are provided
   const [errorMessage, setErrorMessage] = useState("");
+  // Is the file uploading?
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -40,6 +52,55 @@ const Home = () => {
     }
   };
 
+  async function uploadToS3(parameters: params) {
+    setIsUploading(true);
+    // await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulating delay
+
+    setUploadMessage("Uploading your file...");
+    // 1. Get a presigned URL from the lambda function
+    const api_gateway_url =
+      "https://36f0au07n8.execute-api.us-east-1.amazonaws.com/Test-stage/generate-presigned-url";
+    console.log(
+      JSON.stringify({
+        fileName: parameters.Key,
+        fileType: parameters.ContentType,
+      })
+    );
+    const response = await fetch(api_gateway_url, {
+      method: "POST",
+      body: JSON.stringify({
+        fileName: parameters.Key,
+        fileType: parameters.ContentType,
+      }),
+      headers: { "Content-Type": parameters.ContentType },
+    });
+    setUploadMessage("Connecting to AWS...");
+
+    // Parse response body
+    const responseData = await response.json();
+    const bodyData = JSON.parse(responseData.body); // Properly parse the inner stringified JSON
+    console.log("Parsed response data:", bodyData);
+
+    if (!bodyData.uploadUrl) {
+      throw new Error("Upload URL missing in response");
+    } else {
+      console.log(bodyData.uploadUrl);
+    }
+
+    // 2. Upload the file to S3 using the presigned URL
+    await fetch(bodyData.uploadUrl, {
+      method: "PUT",
+      body: file,
+      headers: { "Content-Type": parameters.ContentType },
+    });
+    console.log(`File uploaded successfully to S3 at ${bodyData.uploadUrl}`);
+
+    setUploadMessage("File uploaded!");
+    setIsUploading(false);
+    const quizId = Math.floor(Math.random() * 10000).toString();
+    navigate(`/quiz/${quizId}`);
+  } // end of uploadToS3 function
+
   const handleSubmit = () => {
     // this regex allows spaces only, not good
     // const alphanumeric = /^[a-zA-Z0-9\s]+$/;
@@ -58,12 +119,20 @@ const Home = () => {
     } else {
       setErrorMessage("");
       console.log("Quiz name: ", quizName, "File: ", file.name);
+      const uniqueFileName = `${file.name}-${Date.now()}.pdf`;
 
+      const parameters = {
+        Bucket: BUCKET_NAME,
+        Key: uniqueFileName,
+        Body: file,
+        ContentType: "application/pdf",
+      };
+
+      // Try to upload
+      uploadToS3(parameters);
       // Need to generate a quizID somehow since each quiz is unique.
       // For now, choosing a random number, but need to look up
       // how to do this.
-      const quizId = Math.floor(Math.random() * 10000).toString();
-      navigate(`/quiz/${quizId}`);
     }
   };
 
@@ -146,9 +215,19 @@ const Home = () => {
             {errorMessage && (
               <p className="text-red-500 font-medium">{errorMessage}</p>
             )}
-            <Button className="w-full" onClick={handleSubmit}>
+            <Button
+              className="w-full"
+              onClick={handleSubmit}
+              disabled={isUploading}
+            >
               Generate Quiz
             </Button>
+            {isUploading && (
+              <div className="mt-4 flex items-center space-x-2">
+                <div className="animate-spin h-6 w-6 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+                <p className="text-gray-700">{uploadMessage}</p>
+              </div>
+            )}
           </div>
         </Card>
       )}
