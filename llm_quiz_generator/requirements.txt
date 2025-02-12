@@ -1,0 +1,6 @@
+google-generativeai
+protobuf
+grpcio
+PyPDF2
+python-dotenv
+requests

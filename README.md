@@ -43,3 +43,4 @@ They should also be a button to allow the user to exit the quiz screen and retur
 should automatically add the uploaded and quiz to be stored in their respective sections.
 
 Backend:
+Navigate to the llm_quiz_generator_folder
