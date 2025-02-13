@@ -1,64 +1,142 @@
 import json
 import boto3
-import os
+from datetime import datetime
 from llm_quiz_generator.pdf_quiz_generator import generate_quiz
 
-# Initialize AWS S3 client
+# Initialize AWS clients
 s3 = boto3.client('s3')
+dynamodb = boto3.resource('dynamodb')
+quiz_table = dynamodb.Table('QuizSystem')
 
-def get_presigned_url(bucket_name, file_key):
-    """Generate a presigned URL for the uploaded PDF."""
-    url = s3.generate_presigned_url(
+def get_presigned_url(bucket: str, key: str, expiration: int = 600) -> str:
+    """Generate a presigned URL for accessing an S3 object"""
+    return s3.generate_presigned_url(
         'get_object',
-        Params={'Bucket': bucket_name, 'Key': file_key},
-        ExpiresIn=600  # URL expires in 10 minutes
+        Params={'Bucket': bucket, 'Key': key},
+        ExpiresIn=expiration
     )
-    return url
 
-def process_pdf(pdf_url):
-    """Generate quiz for the PDF using the integrated generate_quiz function."""
+def store_quiz_in_dynamodb(quiz_data: dict, user_id: str, document_name: str) -> None:
+    """Store quiz data in DynamoDB"""
+    # Add additional attributes for GSIs
+    quiz_data['user_id'] = user_id
+    quiz_data['document_name'] = document_name
+    quiz_data['generated_at'] = datetime.now().isoformat()
+    
     try:
-        result_json = generate_quiz(
-            pdf_path=pdf_url,
-            num_questions=5,  # Adjust or make configurable as needed
-            question_types=["multiple_choice", "true_false"]
-        )
-        result = json.loads(result_json)
-        return result
+        quiz_table.put_item(Item=quiz_data)
     except Exception as e:
-        print(f"Error generating quiz: {str(e)}")
-        return {
+        print(f"Error storing quiz in DynamoDB: {str(e)}")
+        raise
+
+def process_pdf(bucket: str, key: str, user_id: str) -> dict:
+    """Process PDF and generate quiz"""
+    try:
+        # Generate presigned URL for PDF access
+        presigned_url = get_presigned_url(bucket, key)
+        
+        # Generate quiz using existing function
+        quiz_response = generate_quiz(
+            pdf_path=presigned_url,
+            num_questions=5,
+            question_types=['multiple_choice', 'true_false']
+        )
+        
+        # Parse the JSON response
+        quiz_data = json.loads(quiz_response)
+        
+        # Store in DynamoDB
+        store_quiz_in_dynamodb(
+            quiz_data=quiz_data,
+            user_id=user_id,
+            document_name=key
+        )
+        
+        return quiz_data
+        
+    except Exception as e:
+        error_response = {
             "status": "error",
-            "error_message": str(e)
+            "error_message": str(e),
+            "metadata": {
+                "source_document": key,
+                "timestamp": datetime.now().isoformat()
+            }
         }
+        return error_response
 
 def lambda_handler(event, context):
-    """Triggered when a PDF is uploaded to S3."""
-    print("Event:", json.dumps(event, indent=2))
-    
-    responses = []
-    for record in event['Records']:
-        bucket_name = record['s3']['bucket']['name']
-        file_key = record['s3']['object']['key']
+    """Lambda handler function"""
+    try:
+        # Extract information from event
+        records = event.get('Records', [])
+        responses = []
+        
+        for record in records:
+            # Extract S3 information
+            bucket = record['s3']['bucket']['name']
+            key = record['s3']['object']['key']
+            
+            # Extract user_id from metadata or context
+            # This could come from various sources depending on your setup
+            user_id = "default_user"  # Replace with actual user identification logic
+            
+            # Process the PDF
+            response = process_pdf(bucket, key, user_id)
+            responses.append(response)
+        
+        return {
+            'statusCode': 200,
+            'body': json.dumps(responses)
+        }
+        
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({
+                'error': str(e)
+            })
+        }
 
-        print(f"Processing file: {file_key} from bucket: {bucket_name}")
+# Additional utility functions for retrieving quizzes
 
-        # Generate a presigned URL for the PDF file in S3
-        pdf_url = get_presigned_url(bucket_name, file_key)
+# def get_quiz_by_id(quiz_id: str) -> dict:
+#     """Retrieve a quiz by its ID"""
+#     try:
+#         response = quiz_table.get_item(
+#             Key={'quiz_id': quiz_id}
+#         )
+#         return response.get('Item')
+#     except Exception as e:
+#         print(f"Error retrieving quiz: {str(e)}")
+#         return None
 
-        # Process the PDF file by generating the quiz
-        quiz_response = process_pdf(pdf_url)
-        responses.append({
-            "file": file_key,
-            "response": quiz_response
-        })
+# def get_quizzes_by_document(document_name: str) -> list:
+#     """Retrieve all quizzes for a document"""
+#     try:
+#         response = quiz_table.query(
+#             IndexName='DocumentIndex',
+#             KeyConditionExpression='document_name = :doc',
+#             ExpressionAttributeValues={
+#                 ':doc': document_name
+#             }
+#         )
+#         return response.get('Items', [])
+#     except Exception as e:
+#         print(f"Error retrieving quizzes by document: {str(e)}")
+#         return []
 
-        print("Quiz Response:", json.dumps(quiz_response, indent=2))
-
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "PDF processing completed",
-            "results": responses
-        })
-    } 
+# def get_quizzes_by_user(user_id: str) -> list:
+#     """Retrieve all quizzes for a user"""
+#     try:
+#         response = quiz_table.query(
+#             IndexName='UserIndex',
+#             KeyConditionExpression='user_id = :uid',
+#             ExpressionAttributeValues={
+#                 ':uid': user_id
+#             }
+#         )
+#         return response.get('Items', [])
+#     except Exception as e:
+#         print(f"Error retrieving quizzes by user: {str(e)}")
+#         return [] 
