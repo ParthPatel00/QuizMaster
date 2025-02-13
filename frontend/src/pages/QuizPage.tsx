@@ -1,34 +1,67 @@
 import Card from "../components/ui/Card";
 import { useState } from "react";
 import Button from "../components/ui/Button";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+
+interface InputQuiz {
+  quiz_name: string;
+  questions: {
+    question_text: string;
+    question_type: string;
+    options: string[];
+    correct_answer: string;
+    question_id: string;
+  }[];
+}
+
+interface OutputQuiz {
+  quizName: string;
+  questions: {
+    id: number;
+    question: string;
+    options: string[];
+    correctAnswer: string;
+  }[];
+}
+
+const convertQuizFormat = (input: InputQuiz): OutputQuiz => {
+  return {
+    quizName: input.quiz_name,
+    questions: input.questions.map((q) => ({
+      id: parseInt(q.question_id, 10),
+      question: q.question_text,
+      options: q.options,
+      correctAnswer: q.correct_answer,
+    })),
+  };
+};
 
 // Moch data for the quiz. In the future this will be replaced by data from the API response
-const quizData = {
-  quizId: "12345",
-  quizName: "Computer Science",
-  questions: [
-    {
-      id: 1,
-      question: "Which of these is a low level language?",
-      options: ["Python", "C", "Assembly", "Java"],
-      correctAnswer: "Assembly",
-    },
-    {
-      id: 2,
-      question:
-        "what keyword do you use to print something on the screen in C++?",
-      options: ["printf", "cout", "cin", "cprint"],
-      correctAnswer: "cout",
-    },
-    {
-      id: 3,
-      question: "Which one of these is a compiled languate?",
-      options: ["JavaScript", "Python", "Ruby", "C++"],
-      correctAnswer: "C++",
-    },
-  ],
-}; // end of mock data
+// const quizData = {
+//   quizId: "12345",
+//   quizName: "Computer Science",
+//   questions: [
+//     {
+//       id: 1,
+//       question: "Which of these is a low level language?",
+//       options: ["Python", "C", "Assembly", "Java"],
+//       correctAnswer: "Assembly",
+//     },
+//     {
+//       id: 2,
+//       question:
+//         "what keyword do you use to print something on the screen in C++?",
+//       options: ["printf", "cout", "cin", "cprint"],
+//       correctAnswer: "cout",
+//     },
+//     {
+//       id: 3,
+//       question: "Which one of these is a compiled languate?",
+//       options: ["JavaScript", "Python", "Ruby", "C++"],
+//       correctAnswer: "C++",
+//     },
+//   ],
+// }; // end of mock data
 
 const QuizPage = () => {
   // Hook declarations
@@ -40,6 +73,14 @@ const QuizPage = () => {
   const [score, setScore] = useState<number | null>(null);
   const navigate = useNavigate();
 
+  // const { quizId } = useParams();
+  const location = useLocation();
+  // const quizData = location.state?.quizDataState || null;
+  const quizData: OutputQuiz | null = location.state?.quizDataState
+    ? convertQuizFormat(location.state.quizDataState)
+    : null;
+
+  // console.log(convertQuizFormat(quizData));
   // Helper functions
   const handleSelectAnswer = (questionId: number, option: string) => {
     // Whichever option is selected, update/insert the questionId: option
@@ -51,7 +92,10 @@ const QuizPage = () => {
   };
 
   const handleSubmit = () => {
-    if (Object.keys(selectedAnswers).length !== quizData.questions.length) {
+    if (
+      !quizData ||
+      Object.keys(selectedAnswers).length !== quizData.questions.length
+    ) {
       setSubmissionError(
         "Please select an option for each question before submitting"
       );
@@ -82,12 +126,12 @@ const QuizPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="text-3xl font-boldm mb-4 text-gray-600">
-        Quiz: {quizData.quizName}
+        Quiz: {quizData?.quizName}
       </h1>
       {/* Card for the quiz */}
       <Card className="w-full max-w-2xl p-4 p-2 flex flex-col space-y-4">
         {/* Each question should be mapped along with the options */}
-        {quizData.questions.map((q) => (
+        {quizData?.questions.map((q) => (
           <div key={q.id} className="mb-15">
             <h2 className="text-lg font-semibold">
               {q.id}. {q.question}
@@ -140,14 +184,14 @@ const QuizPage = () => {
             </p>
             <p
               className={`text-2xl font-bold mt-2 p-4 rounded-lg shadow-md ${
-                score && score === quizData.questions.length
+                score && score === quizData?.questions.length
                   ? "bg-green-200 text-green-800" // Perfect Score
-                  : score && score >= quizData.questions.length / 2
+                  : score && quizData && score >= quizData.questions.length / 2
                   ? "bg-yellow-200 text-yellow-800" // Average Score
                   : "bg-red-200 text-red-800" // Low Score
               }`}
             >
-              Your Score: {score} / {quizData.questions.length}
+              Your Score: {score} / {quizData?.questions.length}
             </p>
             <div className="flex space-x-4 mt-4">
               <Button onClick={handleRetake}>Retake Quiz</Button>

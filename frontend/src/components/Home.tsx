@@ -53,53 +53,92 @@ const Home = () => {
   };
 
   async function uploadToS3(parameters: params) {
-    setIsUploading(true);
-    // await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulating delay
+    try {
+      setIsUploading(true);
+      setUploadMessage("Connecting to AWS...");
+      // await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulating delay
 
-    setUploadMessage("Uploading your file...");
-    // 1. Get a presigned URL from the lambda function
-    const api_gateway_url =
-      "https://36f0au07n8.execute-api.us-east-1.amazonaws.com/Test-stage/generate-presigned-url";
-    console.log(
-      JSON.stringify({
-        fileName: parameters.Key,
-        fileType: parameters.ContentType,
-      })
-    );
-    const response = await fetch(api_gateway_url, {
-      method: "POST",
-      body: JSON.stringify({
-        fileName: parameters.Key,
-        fileType: parameters.ContentType,
-      }),
-      headers: { "Content-Type": parameters.ContentType },
-    });
-    setUploadMessage("Connecting to AWS...");
+      // 1. Get a presigned URL from the lambda function
+      const api_gateway_url =
+        "https://36f0au07n8.execute-api.us-east-1.amazonaws.com/Test-stage/generate-presigned-url";
+      // console.log(
+      //   JSON.stringify({
+      //     fileName: parameters.Key,
+      //     fileType: parameters.ContentType,
+      //   })
+      // );
+      const response = await fetch(api_gateway_url, {
+        method: "POST",
+        body: JSON.stringify({
+          fileName: parameters.Key,
+          fileType: parameters.ContentType,
+        }),
+        headers: { "Content-Type": parameters.ContentType },
+      });
 
-    // Parse response body
-    const responseData = await response.json();
-    const bodyData = JSON.parse(responseData.body); // Properly parse the inner stringified JSON
-    console.log("Parsed response data:", bodyData);
+      // Parse response body
+      const responseData = await response.json();
+      const bodyData = JSON.parse(responseData.body); // Properly parse the inner stringified JSON
 
-    if (!bodyData.uploadUrl) {
-      throw new Error("Upload URL missing in response");
-    } else {
-      console.log(bodyData.uploadUrl);
+      if (!bodyData.uploadUrl) {
+        throw new Error("Upload URL missing in response");
+      } else {
+        console.log(bodyData.uploadUrl);
+      }
+
+      setUploadMessage("Uploading your file...");
+
+      // 2. Upload the file to S3 using the presigned URL
+      await fetch(bodyData.uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": parameters.ContentType },
+      });
+
+      console.log(`File uploaded successfully to S3 at ${bodyData.uploadUrl}`);
+      setUploadMessage("Fetching generated quiz...");
+      // Fetch the quiz
+      const fetchedData = await fetchQuiz(parameters.Key);
+
+      if (!fetchedData) {
+        setUploadMessage("Error: Quiz could not be generated 🫤.");
+        setIsUploading(false);
+        return; // Stop execution if fetching quiz fails
+      }
+      setUploadMessage("Quiz ready!");
+      setIsUploading(false);
+
+      navigate(`/quiz/${parameters.Key}`, {
+        state: { quizDataState: fetchedData },
+      });
+    } catch (error) {
+      console.error("Error in uploadToS3:", error);
+      setUploadMessage("Upload failed. Please try again.");
+      setIsUploading(false);
     }
-
-    // 2. Upload the file to S3 using the presigned URL
-    await fetch(bodyData.uploadUrl, {
-      method: "PUT",
-      body: file,
-      headers: { "Content-Type": parameters.ContentType },
-    });
-    console.log(`File uploaded successfully to S3 at ${bodyData.uploadUrl}`);
-
-    setUploadMessage("File uploaded!");
-    setIsUploading(false);
-    const quizId = Math.floor(Math.random() * 10000).toString();
-    navigate(`/quiz/${quizId}`);
   } // end of uploadToS3 function
+
+  const fetchQuiz = async (quiz_id: string) => {
+    await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulating delay
+    setUploadMessage("Generating quiz...");
+    try {
+      const response = await fetch(
+        `https://tj9hd711x4.execute-api.us-east-1.amazonaws.com/default/fetchQuiz?quizId=${quiz_id}`
+      );
+      if (!response.ok) {
+        console.error("Failed to fetch quiz: ", response.statusText);
+        return null;
+      }
+      const data = await response.json();
+      console.log("Quiz data fetched: ", data);
+      return data;
+      // navigate("/quiz", { state: { quizData: data } });
+    } catch (error) {
+      console.error("Error fetching quiz:", error);
+      return null;
+      // setLoading(false);
+    }
+  };
 
   const handleSubmit = () => {
     // this regex allows spaces only, not good
@@ -118,8 +157,13 @@ const Home = () => {
       return;
     } else {
       setErrorMessage("");
-      console.log("Quiz name: ", quizName, "File: ", file.name);
-      const uniqueFileName = `${file.name}-${Date.now()}.pdf`;
+
+      const customFileName = file.name.replace(".pdf", "");
+      const timestamp = Date.now();
+      const userEmail = user?.email || "defaultuser";
+      const sanitizedQuizName = quizName.replace(/\s+/g, "_"); // Replace spaces with underscores
+
+      const uniqueFileName = `${customFileName}__${sanitizedQuizName}__${timestamp}__${userEmail}.pdf`;
 
       const parameters = {
         Bucket: BUCKET_NAME,

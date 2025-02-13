@@ -1,0 +1,100 @@
+{
+    "metadata": {
+        "question_types_requested": [
+            "multiple_choice",
+            "true_false"
+        ],
+        "generated_at": "2025-02-13T20:20:34.122864",
+        "number_of_questions": 5
+    },
+    "document_name": "uploads/DB_systems_overview__Database_quiz4__1739478022748__patelsparth00@gmail.com.pdf",
+    "user_id": "patelsparth00@gmail.com",
+    "questions": [
+        {
+            "question_text": "Which of the following is NOT a typical DBMS functionality?",
+            "metadata": {
+                "difficulty": "medium",
+                "topic": "general"
+            },
+            "question_type": "multiple_choice",
+            "options": [
+                "Defining database data types",
+                "Constructing the initial database",
+                "Manipulating the database",
+                "Running operating system processes"
+            ],
+            "correct_answer": "Running operating system processes",
+            "explanation": "Running operating system processes is not a core function of a DBMS; instead the DBMS relies on the operating system.",
+            "question_id": "1"
+        },
+        {
+            "question_text": "The DBMS catalog stores the description of a particular database, also known as metadata.",
+            "metadata": {
+                "difficulty": "medium",
+                "topic": "general"
+            },
+            "question_type": "true_false",
+            "options": [
+                "True",
+                "False"
+            ],
+            "correct_answer": "True",
+            "explanation": "The DBMS catalog, as stated in the content, stores the description of a database, referred to as metadata.",
+            "question_id": "2"
+        },
+        {
+            "question_text": "Which type of database user primarily uses \"canned transactions\"?",
+            "metadata": {
+                "difficulty": "medium",
+                "topic": "general"
+            },
+            "question_type": "multiple_choice",
+            "options": [
+                "Database Administrator",
+                "Sophisticated User",
+                "Naive or Parametric User",
+                "System Analyst"
+            ],
+            "correct_answer": "Naive or Parametric User",
+            "explanation": "The content explicitly states that Naïve or Parametric users utilize previously well-defined functions or canned transactions.",
+            "question_id": "3"
+        },
+        {
+            "question_text": "Which of the following is NOT an advantage of using the database approach?",
+            "metadata": {
+                "difficulty": "medium",
+                "topic": "general"
+            },
+            "question_type": "multiple_choice",
+            "options": [
+                "Restricting unauthorized access to data",
+                "Providing optimization of queries",
+                "Requiring redundant data storage",
+                "Sharing of data among multiple users"
+            ],
+            "correct_answer": "Requiring redundant data storage",
+            "explanation": "The database approach aims to control data redundancy, not require it.",
+            "question_id": "4"
+        },
+        {
+            "question_text": "Object-Oriented Database Management Systems (OODBMSs) were the first to be introduced.",
+            "metadata": {
+                "difficulty": "medium",
+                "topic": "general"
+            },
+            "question_type": "false",
+            "options": [
+                "True",
+                "False"
+            ],
+            "correct_answer": "False",
+            "explanation": "The content states that the Hierarchical and Network Models predate OODBMSs.",
+            "question_id": "5"
+        }
+    ],
+    "status": "success",
+    "quiz_name": "Database_quiz4",
+    "source_document": "https://quizmaster-pdf-uploads.s3.amazonaws.com/uploads/DB_systems_overview__Database_quiz4__1739478022748__patelsparth00%40gmail.com.pdf?AWSAccessKeyId=ASIAXEVXY3LK3ZB3JV6I&Signature=OIRfxjHGKzmz%2FLvc39elEZIkLHA%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEPX%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIQC9rjlWaTQatvsDLmF%2Bogrey1q3jPuzM8c7tn8795FlbgIgAPBjk6lRlzmDf1tDVrx%2BK8KRFW55WXRkDZJmhmwGYRkq%2BAIIHRAAGgw0OTEwODU0MjEyNjkiDKZoE9rZRI%2BdsD9Q%2FCrVApGyBkBOOSgiJpjqDIXeDYDUykv%2FDZ2PsDwWQ9bkOQ0VXJixR%2F8Tzt7mIghrEIjw1aCVPu12i9bfKPqb%2Bk2Rhku7JEunpKFluc%2BGsm8oh11Rh%2FT2y%2FnifQuSjU8SJFrqJ%2Blse%2FrfFlHWR67sLPqxpTkJrhCQOmWmbRB7923Vbnsc486Jae6HXPkHOC6a96iaUVL9aE%2B3%2F4gfZmZB%2B3Pb6o3l39A49iEvb7ATYDQMWVhI0jLVJBKAcYtdIioyPb9KwKInO5AzD%2F4BDNybd1IKKg2GwwS%2B29ZLktv9IpQ8CBTo%2BWhvl6JrOerqX%2FkLM9VS5gqVM2mP9TVwLUdRxWS1L9Cp8tz3NysZyCcs3O5b7s3yQBGtZBBJt15NMj7yFvU5VIhJyOSMcnRHyhWkvgTG%2BK%2BEDN91Ng4ZDgtgmWjwGFbIsvRzHfhCvPMK2fcPVZYKSkAN3EGYMIuoub0GOp4BdHCDXORmckn6wBQrICUM76glUaeA0U7Krk9VENzLVbwcbGyZdIrRIj5G6osLMMRrBpotmCySWB6N9AjK3datge9Zvv2NULFVSzNErAJ6579nlx13si7YIGr0b2xnz4TDDaRA%2B3KuPzmYsyG7HMobwKlEX9w32I78rcSNd7KBiX9EMZovR326SEsQe%2FenHIpZG50c6aB77%2BfbbYYEXP4%3D&Expires=1739478630",
+    "quiz_id": "DB_systems_overview__Database_quiz4__1739478022748__patelsparth00@gmail.com.pdf",
+    "generated_at": "2025-02-13T20:20:34.123651"
+}
