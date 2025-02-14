@@ -120,7 +120,6 @@ const Home = () => {
 
   const fetchQuiz = async (quiz_id: string) => {
     await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulating delay
-    setUploadMessage("Generating quiz...");
     try {
       const response = await fetch(
         `https://tj9hd711x4.execute-api.us-east-1.amazonaws.com/default/fetchQuiz?quizId=${quiz_id}`
