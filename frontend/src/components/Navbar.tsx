@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
 import { useAuth } from "../hooks/useAuth";
-import Button from "./ui/Button";
+//import Button from "./ui/Button";
 import { logOut } from "../services/authService";
 import defaultUserPhoto from "../assets/user.png";
 
@@ -16,7 +16,7 @@ const Navbar = () => {
   // will look different when logged in, compared to when not
   // logged in.
   // Will implement toggling this feature in the future
-  const [loggedIn, setLoggedIn] = useState(false);
+  //const [loggedIn, setLoggedIn] = useState(false);
   return (
     <nav>
       <div className="p-4 bg-blue-600 text-white">

@@ -7,7 +7,7 @@ const LoginPage = () => {
   // Hook declarations
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  //const [name, setName] = useState("");
   const [popup, setPopup] = useState("");
   const navigate = useNavigate();
 
