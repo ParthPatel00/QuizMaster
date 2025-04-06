@@ -12,7 +12,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Navigate to frontend directory and build
-                dir('frontend') {
+                dir('/home/ubuntu/QuizMaster') {
                     sh 'npm install'
                     sh 'npm run build'
                 }
