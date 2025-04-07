@@ -6,11 +6,6 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repo') {
-            steps {
-                 git branch: 'main', credentialsId: 'DP_Jenkins', url: 'https://github.com/ParthPatel00/QuizMaster.git' // or use SSH
-            }
-        }
 
         stage('Install Dependencies') {
             steps {
