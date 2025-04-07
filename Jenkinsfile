@@ -32,7 +32,7 @@ pipeline {
                 '''
             }
         }
-    }
+    // }
 
     post {
         success {
