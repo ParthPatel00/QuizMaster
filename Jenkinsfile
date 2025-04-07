@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/yourusername/your-react-app.git' // or use SSH
+                git 'https://github.com/ParthPatel00/QuizMaster.git' // or use SSH
             }
         }
 
