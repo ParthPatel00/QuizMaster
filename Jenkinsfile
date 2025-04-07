@@ -9,7 +9,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 dir('frontend') {
-                    sh 'sudo npm ci'
+                    sh 'npm ci'
                 }
             }
         }
@@ -17,7 +17,7 @@ pipeline {
         stage('Build App') {
             steps {
                 dir('frontend') {
-                    sh 'sudo npm run build'
+                    sh 'npm run build'
                 }
             }
         }
