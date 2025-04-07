@@ -5,14 +5,14 @@ pipeline {
         NODE_ENV = "production"
     }
 
-    stages {
-        stage('Install Dependencies') {
-            steps {
-                dir('frontend') {
-                    sh 'npm ci'
-                }
-            }
-        }
+    // stages {
+    //     stage('Install Dependencies') {
+    //         steps {
+    //             dir('frontend') {
+    //                 sh 'npm ci'
+    //             }
+    //         }
+    //     }
 
         stage('Build App') {
             steps {
