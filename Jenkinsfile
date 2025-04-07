@@ -9,6 +9,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 dir('frontend') {
+                    sh 'rm -rf node_modules package-lock.json'
                     sh 'npm ci'
                 }
             }
