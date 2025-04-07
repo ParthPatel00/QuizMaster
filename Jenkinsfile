@@ -1,42 +1,46 @@
 pipeline {
     agent any
-    
+
+    environment {
+        NODE_ENV = "production"
+    }
+
     stages {
-        stage('Checkout') {
+        stage('Clone Repo') {
             steps {
-                // Pull code from GitHub repository
-                checkout scm
+                git 'https://github.com/yourusername/your-react-app.git' // or use SSH
             }
         }
-        
-        stage('Build') {
+
+        stage('Install Dependencies') {
             steps {
-                // Navigate to frontend directory and build
-                dir('frontend') {
-                    sh 'npm install'
-                    sh 'npm run build'
-                }
+                sh 'npm install'
             }
         }
-        
-        stage('Deploy') {
+
+        stage('Build App') {
             steps {
-                // Copy build artifacts to the server location
-                sh 'sudo cp -R frontend/dist/ /var/www/vhosts/frontend/'
-                
-                // Reload Nginx
-                sh 'sudo systemctl reload nginx'
+                sh 'npm run build'
+            }
+        }
+
+        stage('Deploy to Nginx') {
+            steps {
+                sh '''
+                    sudo rm -rf /var/www/vhosts/frontend/*
+                    sudo cp -R dist/* /var/www/vhosts/frontend/
+                    sudo nginx -s reload
+                '''
             }
         }
     }
-    
+
     post {
         success {
-            echo 'Deployment completed successfully!'
+            echo '✅ Deployment completed successfully!'
         }
         failure {
-            echo 'Deployment failed!'
+            echo '❌ Deployment failed.'
         }
     }
 }
-
