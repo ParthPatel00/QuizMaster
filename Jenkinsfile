@@ -9,6 +9,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 dir('frontend') {
+                    sh 'rm -rf node_modules'  // Clean up node_modules first
                     sh 'npm ci'
                 }
             }
