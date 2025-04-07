@@ -6,24 +6,28 @@ pipeline {
     }
 
     stages {
-
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                dir('frontend') {
+                    sh 'npm install'
+                }
             }
         }
 
         stage('Build App') {
             steps {
-                sh 'npm run build'
+                dir('frontend') {
+                    sh 'npm run build'
+                }
             }
         }
 
         stage('Deploy to Nginx') {
             steps {
+                // Adjust `dist` to `build` if you're using Create React App
                 sh '''
                     sudo rm -rf /var/www/vhosts/frontend/*
-                    sudo cp -R dist/* /var/www/vhosts/frontend/
+                    sudo cp -R frontend/build/* /var/www/vhosts/frontend/
                     sudo nginx -s reload
                 '''
             }
@@ -32,7 +36,7 @@ pipeline {
 
     post {
         success {
-            echo '✅ Deployment completed successfully!'
+            echo '✅ Deployment completed!'
         }
         failure {
             echo '❌ Deployment failed.'
