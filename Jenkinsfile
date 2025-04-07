@@ -26,7 +26,6 @@ pipeline {
             steps {
                 // Adjust `dist` to `build` if you're using Create React App
                 sh '''
-                    sudo cp -R frontend/dist/* /var/www/vhosts/frontend/
                     sudo nginx -s reload
                 '''
             }
