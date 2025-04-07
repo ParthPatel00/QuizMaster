@@ -5,7 +5,7 @@ pipeline {
         NODE_ENV = "production"
     }
 
-    // stages {
+    stages {
     //     stage('Install Dependencies') {
     //         steps {
     //             dir('frontend') {
@@ -32,7 +32,7 @@ pipeline {
                 '''
             }
         }
-    // }
+    }
 
     post {
         success {
