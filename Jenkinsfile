@@ -6,38 +6,40 @@ pipeline {
     }
 
     stages {
-    //     stage('Install Dependencies') {
-    //         steps {
-    //             dir('frontend') {
-    //                 sh 'npm ci'
-    //             }
-    //         }
-    //     }
-
-        stage('Build App') {
+        stage('Checkout') {
             steps {
-                dir('frontend') {
+                // Pull code from GitHub repository
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Navigate to frontend directory and build
+                dir('/home/ubuntu/QuizMaster') {
+                    sh 'npm install'
                     sh 'npm run build'
                 }
             }
         }
 
-        stage('Deploy to Nginx') {
+        stage('Deploy') {
             steps {
-                // Adjust `dist` to `build` if you're using Create React App
-                sh '''
-                    sudo nginx -s reload
-                '''
+                // Copy build artifacts to the server location
+                sh 'sudo cp -R frontend/dist/ /var/www/vhosts/frontend/'
+                
+                // Reload Nginx
+                sh 'sudo systemctl reload nginx'
             }
         }
     }
 
     post {
         success {
-            echo '✅ Deployment completed!'
+            echo 'Deployment completed successfully!'
         }
         failure {
-            echo '❌ Deployment failed.'
+            echo 'Deployment failed!'
         }
     }
 }
