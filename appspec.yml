@@ -12,13 +12,15 @@ hooks:
       runas: root
 
   AfterInstall:
+    # your backend deploy
     - location: scripts/deploy.sh
       timeout: 300
       runas: ubuntu
 
+    # build & deploy frontend as ubuntu
     - location: scripts/build_frontend.sh
       timeout: 600
-      runas: root
+      runas: ubuntu
 
   ApplicationStart:
     - location: scripts/restart_nginx.sh
