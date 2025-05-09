@@ -20,6 +20,7 @@ const Home = () => {
   const [quizName, setQuizName] = useState("");
   // Storing file
   const [file, setFile] = useState<File | null>(null);
+  const [sanitizedFileName, setSanitizedFileName] = useState("");
   // Storint error if invalid inputs are provided
   const [errorMessage, setErrorMessage] = useState("");
   // Is the file uploading?
@@ -38,10 +39,18 @@ const Home = () => {
       if (fileUploaded.size > 5 * 1024 * 1024) {
         setErrorMessage("File size must be less than 5MB");
         setFile(null);
+        setSanitizedFileName(""); // clear any previously stored file name
+
         // console.log("file is larger than 5mb");
       } else {
         setErrorMessage("");
         setFile(fileUploaded);
+        // Remove .pdf and replace spaces with underscores
+        const sanitizedName = fileUploaded.name
+          .replace(".pdf", "")
+          .replace(/\s+/g, "_");
+
+        setSanitizedFileName(sanitizedName);
         // console.log(
         //   "File uploaded: ",
         //   fileUploaded.name,
@@ -118,26 +127,71 @@ const Home = () => {
     }
   } // end of uploadToS3 function
 
-  const fetchQuiz = async (quiz_id: string) => {
-    await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulating delay
-    try {
-      const response = await fetch(
-        `https://tj9hd711x4.execute-api.us-east-1.amazonaws.com/default/fetchQuiz?quizId=${quiz_id}`
-      );
-      if (!response.ok) {
-        console.error("Failed to fetch quiz: ", response.statusText);
-        return null;
+  const fetchQuiz = async (
+    quiz_id: string,
+    maxAttempts = 15,
+    delay = 2000
+  ): Promise<any | null> => {
+    const encodedQuizId = encodeURIComponent(quiz_id);
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        console.log(`Attempt ${attempt}: Fetching quiz...`);
+        const response = await fetch(
+          `https://tj9hd711x4.execute-api.us-east-1.amazonaws.com/default/fetchQuiz?quizId=${encodedQuizId}`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Quiz data fetched:", data);
+          return data;
+        } else if (response.status === 404) {
+          console.warn("Quiz not ready yet. Retrying...");
+        } else {
+          console.error(
+            "Unexpected error:",
+            response.status,
+            response.statusText
+          );
+          return null;
+        }
+      } catch (error) {
+        console.error("Fetch attempt failed:", error);
       }
-      const data = await response.json();
-      console.log("Quiz data fetched: ", data);
-      return data;
-      // navigate("/quiz", { state: { quizData: data } });
-    } catch (error) {
-      console.error("Error fetching quiz:", error);
-      return null;
-      // setLoading(false);
+
+      // Wait before next attempt
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
+
+    console.error("Failed to fetch quiz within timeout.");
+    return null;
   };
+  // const fetchQuiz = async (quiz_id: string) => {
+  //   await new Promise((resolve) => setTimeout(resolve, 10000)); // Simulating delay
+  //   try {
+  //     const encodedQuizId = encodeURIComponent(quiz_id);
+  //     console.log("Fetching quiz with:", encodedQuizId);
+  //     const response = await fetch(
+  //       `https://tj9hd711x4.execute-api.us-east-1.amazonaws.com/default/fetchQuiz?quizId=${encodedQuizId}`
+  //     );
+  //     if (!response.ok) {
+  //       console.error(
+  //         "Failed to fetch quiz: ",
+  //         response.status,
+  //         response.statusText
+  //       );
+  //       return null;
+  //     }
+  //     const data = await response.json();
+  //     console.log("Quiz data fetched: ", data);
+  //     return data;
+  //     // navigate("/quiz", { state: { quizData: data } });
+  //   } catch (error) {
+  //     console.error("Error fetching quiz:", error);
+  //     return null;
+  //     // setLoading(false);
+  //   }
+  // };
 
   const handleSubmit = () => {
     // this regex allows spaces only, not good
@@ -162,7 +216,7 @@ const Home = () => {
       const userEmail = user?.email || "defaultuser";
       const sanitizedQuizName = quizName.replace(/\s+/g, "_"); // Replace spaces with underscores
 
-      const uniqueFileName = `${customFileName}__${sanitizedQuizName}__${timestamp}__${userEmail}.pdf`;
+      const uniqueFileName = `${sanitizedFileName}__${sanitizedQuizName}__${timestamp}__${userEmail}.pdf`;
 
       const parameters = {
         Bucket: BUCKET_NAME,
