@@ -1,10 +1,3 @@
-version: 0.0
-os: linux
-
-files:
-  - source: /
-    destination: /home/ubuntu/QuizMaster
-
 hooks:
   BeforeInstall:
     - location: scripts/clean_old.sh
@@ -12,13 +5,15 @@ hooks:
       runas: root
 
   AfterInstall:
-    # your backend deploy
-    - location: scripts/deploy.sh
+    - location: scripts/fix_permissions.sh    # chowns back to ubuntu
+      timeout: 300
+      runas: root
+
+    - location: scripts/deploy.sh             # your backend steps
       timeout: 300
       runas: ubuntu
 
-    # build & deploy frontend as ubuntu
-    - location: scripts/build_frontend.sh
+    - location: scripts/build_frontend.sh     # will now npm ci & build cleanly
       timeout: 600
       runas: ubuntu
 
