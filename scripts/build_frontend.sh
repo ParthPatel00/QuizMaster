@@ -1,15 +1,12 @@
 #!/bin/bash
 set -e
-
-FRONTEND_DIR=/home/ubuntu/QuizMaster/frontend
-DEST=/var/www/quizmaster
-
-# 1) Install deps & build as ubuntu
-cd "$FRONTEND_DIR"
+# 1. Install dependencies and build
+cd /home/ubuntu/QuizMaster/frontend
 npm ci
 npm run build
 
-# 2) Copy built assets into nginx webroot (needs root)
+# 2. Deploy built assets
+DEST=/var/www/quizmaster
 sudo rm -rf "${DEST:?}/"*
 sudo mkdir -p "$DEST"
 sudo cp -r dist/* "$DEST"
