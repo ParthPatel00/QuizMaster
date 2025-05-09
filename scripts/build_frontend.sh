@@ -4,12 +4,12 @@ set -e
 FRONTEND_DIR=/home/ubuntu/QuizMaster/frontend
 DEST=/var/www/quizmaster
 
-# 1) Install & build as ubuntu (so EFS permissions work)
+# 1) Install deps & build as ubuntu
 cd "$FRONTEND_DIR"
 npm ci
 npm run build
 
-# 2) Copy into nginx’s web root (requires root)
+# 2) Copy built assets into nginx webroot (needs root)
 sudo rm -rf "${DEST:?}/"*
 sudo mkdir -p "$DEST"
 sudo cp -r dist/* "$DEST"
