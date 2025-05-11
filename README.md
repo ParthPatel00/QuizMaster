@@ -13,36 +13,150 @@ thequiz and submit it. Once submitted, the evalation of the quiz should be prese
 be highlighted green or red based on correct and incorrect answers. A retake feature should also exist for the
 user in case they want to retake the quiz. If the user has created an account.
 
-Webpage design:
-On the webpage, there should be a navbar containing "Sign up/Login","My documents" and "My quizzes" options.
-The latter two options which would be empty for guest users and available only for users with an account created.
+# QuizMaster
 
-In the "My documents" page, users should be able to see a list of all documents they have uploaded and the quiz
-associated with each document.
+QuizMaster is an AI-powered quiz generation platform that takes in PDF documents (e.g., notes or lecture slides) and produces customized multiple-choice quizzes. This guide explains how to set up the application locally for development and deploy it to the cloud.
 
-In the "My Quizzes" page, users should be able to see all the quizzes they have created in the past, the documents
-associated with it, and an option to retake the quiz.
+---
 
-The "Sign up/Login" button should allow the user to create an account or login using Authorization, Authentication,
-and Accounting.
+## Table of Contents
 
-On the landing page, there should be brief description on how "Quiz Master" works.
+- [Prerequisites](#prerequisites)
+- [Local Setup](#local-setup)
+- [Cloud Deployment](#cloud-deployment)
+- [Project Structure](#project-structure)
+- [Development Workflow](#development-workflow)
+- [Scripts](#scripts)
+- [Additional Resources](#additional-resources)
 
-Below the description, there should be a "Create Quiz" button. Once clicked, the user should be prompted to enter
-the name for the quiz in a text box and a button to upload a PDF document (within a certain size). Both inputs
-should be mandatory.
+---
 
-Once the requirement is met, a "Generate quiz" button should be available to click. Once clicked, a quiz should
-be generated and presented to the user.
+## Prerequisites
 
-Each question would be numbered from 1 to n, with each having 4 options, only 1 being correct. At the bottom of
-the screen a submit button should allow the quiz to get scored. A correct answer should result in green feedback
-and an incorrect answer should result in red. The user should be allowd to retake the quiz again shall they desire.
+- **Node.js** (v16 or later) and **npm** installed
+- For authentication, a configured [Firebase](https://firebase.google.com/docs) project
+- (Optional) AWS CLI configured if deploying to AWS
+- (Optional) Jenkins for your CI/CD pipeline
 
-They should also be a button to allow the user to exit the quiz screen and return to the main menu. Exiting the screen
-should automatically add the uploaded and quiz to be stored in their respective sections.
+---
 
-Backend:
+## Local Setup
 
+1. **Clone the repository:**
 
-#
+   ```bash
+   git clone <repository-url>
+   ```
+
+2. **Install dependencies for the frontend:**
+
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+3. **Start the development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+   The application will be available at [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Cloud Deployment
+
+### Using AWS CodeDeploy
+
+- The repository contains an `appspec.yml` file along with several bash scripts located in the `scripts` folder:
+  - **clean_old.sh:** Clears old deployment files.
+  - **deploy.sh:** Installs dependencies, builds the frontend, and copies the production files.
+  - **build_frontend.sh:** Installs dependencies, builds assets, and deploys them.
+  - **restart_nginx.sh:** Restarts Nginx to serve the updated build.
+- Ensure your target server (e.g., Ubuntu) has Node.js, npm, and Nginx installed and that AWS CodeDeploy is properly configured.
+- Deployment steps (executed by CodeDeploy) include cleaning, deploying, building, and restarting Nginx.
+
+### Using Jenkins
+
+- The `Jenkinsfile` in the root defines a pipeline with the following stages:
+  - **Checkout:** Checks out code from your repository.
+  - **Build:** Installs dependencies and runs the build process.
+  - **Deploy:** Copies build artifacts to the server and reloads Nginx.
+- Update any server paths or settings in the `Jenkinsfile` as needed.
+
+---
+
+## Project Structure
+
+- **frontend/**  
+  Contains the React + TypeScript client application.
+  - `src/`: Application source code (pages, components, services, hooks).
+  - `vite.config.ts`: Vite configuration.
+  - `package.json`: Frontend dependency and script definitions.
+  
+- **scripts/**  
+  Contains bash scripts for deployment:
+  - `clean_old.sh`
+  - `deploy.sh`
+  - `build_frontend.sh`
+  - `restart_nginx.sh`
+
+- **appspec.yml**  
+  AWS CodeDeploy configuration file.
+
+- **Jenkinsfile**  
+  Defines the Jenkins CI/CD pipeline.
+
+- **LambdaFunctions/**  
+  Placeholder for AWS Lambda functions.
+
+- **Non-technical/**  
+  Contains non-technical project documents and collaboration links.
+
+---
+
+## Development Workflow
+
+- **Coding:** Modify components in `frontend/src/` as needed.
+- **Testing:** Use your IDE and browser for live development with HMR.
+- **Linting:** Check your code with:
+
+  ```bash
+  npm run lint
+  ```
+
+- **Production Build:** Create a production build using:
+
+  ```bash
+  npm run build
+  ```
+
+- **Deployment:** Cloud deployment runs the scripts in `/scripts` as defined in `appspec.yml` or through the Jenkins pipeline.
+
+---
+
+## Scripts
+
+- **Local development:** `npm run dev`
+- **Build production assets:** `npm run build`
+- **Deployment Scripts:**  
+  Executed during CI/CD:
+  - `clean_old.sh` cleans previous deployments.
+  - `deploy.sh` installs and deploys the build.
+  - `build_frontend.sh` builds and copies files to the server.
+  - `restart_nginx.sh` restarts the Nginx server.
+
+---
+
+## Additional Resources
+
+- [Vite Documentation](https://vitejs.dev/)
+- [React Documentation](https://reactjs.org/)
+- [Firebase Documentation](https://firebase.google.com/docs)
+- [AWS CodeDeploy Documentation](https://docs.aws.amazon.com/codedeploy/latest/userguide/deployments.html)
+- [Jenkins Documentation](https://www.jenkins.io/doc/)
+
+---
+
+Happy coding!
