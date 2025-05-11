@@ -5,6 +5,10 @@ cd /home/ubuntu/QuizMaster/frontend
 echo "Installing dependencies..."
 npm install
 
+
+echo "Npm audit and fix..."
+npm audit fix
+
 echo "Building app..."
 npm run build
 

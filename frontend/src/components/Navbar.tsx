@@ -45,9 +45,6 @@ const Navbar = () => {
                 <Link to="/my-quizzes" className="hover:underline my-auto">
                   My Quizzes
                 </Link>
-                <Link to="/my-documents" className="hover:underline my-auto">
-                  My Documents
-                </Link>
                 <img
                   src={user.photoURL || defaultUserPhoto}
                   alt="User Avatar"
@@ -72,13 +69,6 @@ const Navbar = () => {
         {/*/ Dropdown menu for small and medium devices  (when isOpen is true)*/}
         {isOpen && user && (
           <div className="lg:hidden flex flex-col mt-2 space-y-2 bg-blue-700 p-4 rounded-md">
-            <Link
-              to="/my-documents"
-              className="hover:underline p-3 border-1 rounded-md"
-              onClick={() => setIsOpen(false)}
-            >
-              My Documents
-            </Link>
             <Link
               to="/my-quizzes"
               className="hover:underline p-3 border-1 rounded-md"
