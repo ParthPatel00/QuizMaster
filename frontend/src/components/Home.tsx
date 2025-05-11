@@ -164,6 +164,7 @@ const Home = () => {
     }
 
     console.error("Failed to fetch quiz within timeout.");
+    setUploadMessage("Failed to fetch quiz. Gemini timed out 🥲");
     return null;
   };
   // const fetchQuiz = async (quiz_id: string) => {
