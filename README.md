@@ -30,7 +30,7 @@ Visit our live site at: [https://quizmaster.dedyn.io/](https://quizmaster.dedyn.
 1. **Clone the repository:**
 
    ```bash
-   git clone <[repository-url](https://github.com/ParthPatel00/QuizMaster.git)>
+   git clone <https://github.com/ParthPatel00/QuizMaster.git>
    ```
 
 2. **Install dependencies for the frontend:**
