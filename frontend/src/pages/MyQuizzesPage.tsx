@@ -56,7 +56,10 @@ const MyQuizzesPage = () => {
           <Card key={quiz.quiz_id} className="mb-4 p-4">
             <h2 className="text-xl font-semibold">{quiz.quiz_name}</h2>
             <p className="text-sm text-gray-600">
-              Created at: {new Date(quiz.generated_at).toLocaleString()}
+              Created at:{" "}
+              {new Date(quiz.generated_at).toLocaleString(undefined, {
+                timeZoneName: "short",
+              })}
             </p>
             <Button
               onClick={() =>

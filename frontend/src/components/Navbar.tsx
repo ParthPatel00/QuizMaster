@@ -60,7 +60,7 @@ const Navbar = () => {
             ) : (
               <>
                 <Link to="/login" className="hover:underline">
-                  Signup/Login
+                  Sign up/Login
                 </Link>
               </>
             )}
@@ -96,7 +96,7 @@ const Navbar = () => {
               className="hover:underline p-3 border-1 rounded-md"
               onClick={() => setIsOpen(false)}
             >
-              Signup/Login
+              Sign up/Login
             </Link>
           </div>
         )}

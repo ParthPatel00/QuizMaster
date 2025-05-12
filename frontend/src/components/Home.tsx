@@ -164,6 +164,7 @@ const Home = () => {
     }
 
     console.error("Failed to fetch quiz within timeout.");
+    setUploadMessage("Failed to fetch quiz. Gemini timed out 🥲");
     return null;
   };
   // const fetchQuiz = async (quiz_id: string) => {
@@ -211,7 +212,7 @@ const Home = () => {
     } else {
       setErrorMessage("");
 
-      const customFileName = file.name.replace(".pdf", "");
+      // const customFileName = file.name.replace(".pdf", "");
       const timestamp = Date.now();
       const userEmail = user?.email || "defaultuser";
       const sanitizedQuizName = quizName.replace(/\s+/g, "_"); // Replace spaces with underscores
