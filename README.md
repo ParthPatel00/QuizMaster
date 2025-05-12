@@ -21,7 +21,6 @@ QuizMaster is an AI-powered quiz generation platform that takes in PDF documents
 - **Node.js** (v16 or later) and **npm** installed
 - For authentication, a configured [Firebase](https://firebase.google.com/docs) project
 - (Optional) AWS CLI configured if deploying to AWS
-- (Optional) Jenkins for your CI/CD pipeline
 
 ---
 
@@ -62,16 +61,6 @@ QuizMaster is an AI-powered quiz generation platform that takes in PDF documents
 - Ensure your target server (e.g., Ubuntu) has Node.js, npm, and Nginx installed and that AWS CodeDeploy is properly configured.
 - Deployment steps (executed by CodeDeploy) include cleaning, deploying, building, and restarting Nginx.
 
-### Using Jenkins
-
-- The `Jenkinsfile` in the root defines a pipeline with the following stages:
-  - **Checkout:** Checks out code from your repository.
-  - **Build:** Installs dependencies and runs the build process.
-  - **Deploy:** Copies build artifacts to the server and reloads Nginx.
-- Update any server paths or settings in the `Jenkinsfile` as needed.
-
----
-
 ## Project Structure
 
 - **frontend/**  
@@ -89,9 +78,6 @@ QuizMaster is an AI-powered quiz generation platform that takes in PDF documents
 
 - **appspec.yml**  
   AWS CodeDeploy configuration file.
-
-- **Jenkinsfile**  
-  Defines the Jenkins CI/CD pipeline.
 
 - **LambdaFunctions/**  
   Placeholder for AWS Lambda functions.
@@ -117,7 +103,7 @@ QuizMaster is an AI-powered quiz generation platform that takes in PDF documents
   npm run build
   ```
 
-- **Deployment:** Cloud deployment runs the scripts in `/scripts` as defined in `appspec.yml` or through the Jenkins pipeline.
+- **Deployment:** Cloud deployment runs the scripts in `/scripts` as defined in `appspec.yml`
 
 ---
 
@@ -140,7 +126,6 @@ QuizMaster is an AI-powered quiz generation platform that takes in PDF documents
 - [React Documentation](https://reactjs.org/)
 - [Firebase Documentation](https://firebase.google.com/docs)
 - [AWS CodeDeploy Documentation](https://docs.aws.amazon.com/codedeploy/latest/userguide/deployments.html)
-- [Jenkins Documentation](https://www.jenkins.io/doc/)
 
 ---
 
