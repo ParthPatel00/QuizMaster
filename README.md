@@ -1,8 +1,6 @@
 # QuizMaster
 
 QuizMaster is an AI-powered quiz generation platform that takes in PDF documents (e.g., notes or lecture slides) and produces customized multiple-choice quizzes. This guide explains how to set up the application locally for development and deploy it to the cloud.
-
-Visit our live site at: [https://quizmaster.dedyn.io/](https://quizmaster.dedyn.io/)
 ---
 
 ## Table of Contents
