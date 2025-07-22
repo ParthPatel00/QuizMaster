@@ -129,7 +129,7 @@ const Home = () => {
 
   const fetchQuiz = async (
     quiz_id: string,
-    maxAttempts = 15,
+    maxAttempts = 25,
     delay = 2000
   ): Promise<any | null> => {
     const encodedQuizId = encodeURIComponent(quiz_id);
