@@ -13,7 +13,7 @@ const Home = () => {
     Body: File;
     ContentType: string;
   }
-  // Hook declarations
+  // HOOK DECLARATIONS
   //  If showForm, show the input and upload button
   const [showForm, setShowForm] = useState(false);
   // Storing name of quiz
