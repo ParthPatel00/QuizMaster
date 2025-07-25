@@ -241,7 +241,7 @@ const Home = () => {
         Welcome, {user?.displayName || "Quiz-Amateur"}
       </h1>
       <h2 className="text-2xl text-blue-600 font-bold mb-2">
-        What the hell is QuizMaster?
+        What is QuizMaster?
       </h2>
       <p className="text-lg text-center max-w-xl mb-6">
         An AI powered tool to generate a personalized quiz from your data!
