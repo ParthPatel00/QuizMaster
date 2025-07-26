@@ -9,8 +9,6 @@ AI-powered quiz generation from user-uploaded PDFs.
 
 **QuizMaster** is an AI-driven web application that allows users to upload PDF documents—lecture slides, textbooks, articles—and receive personalized quizzes in return. The platform instantly grades answers and offers feedback, supporting repeated attempts and long-term quiz storage.
 
-This project was built as part of CMPE 272 (Spring 2025) at San Jose State University.
-
 ---
 
 ## 🎯 Key Features
@@ -83,26 +81,6 @@ Used **Vitest** to test:
 
 ---
 
-## 👥 Team & Contributions
-
-| Name                   | Major Contributions                                          |
-|------------------------|--------------------------------------------------------------|
-| **Parth Patel**        | Frontend development, quiz fetch backend, authentication     |
-| **Shailen Sutradhar**  | Lambda (upload), AWS provisioning, requirements              |
-| **Dev Patel**          | CI/CD, EC2, SSL setup, GitHub Actions                        |
-| **Gautam Thampy**      | Gemini integration, LLM prompt engineering                   |
-
----
-
-## 📎 Useful Links
-
-- 🔗 [Live App](https://quizmaster.dedyn.io/)
-- 📁 [Project Report (PDF)](./QuizMaster%20-%20ProjectReport.pdf)
-- 📂 [Lucidchart Architecture](https://lucid.app/) *(link placeholder)*
-- 📖 [AWS Glossary](https://docs.aws.amazon.com/glossary/latest/reference/glos-chap.html)
-
----
-
 ## 📌 Future Enhancements
 
 - Support for larger file sizes
@@ -110,9 +88,3 @@ Used **Vitest** to test:
 - Admin analytics dashboard
 - AI-based question quality evaluation
 - Real-time collaboration & multiplayer quiz mode
-
----
-
-## 📝 License
-
-This project was built for academic use. For licensing inquiries, please contact the maintainers.
