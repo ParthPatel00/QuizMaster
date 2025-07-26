@@ -3,9 +3,6 @@
 AI-powered quiz generation from user-uploaded PDFs.  
 📚 Built to help students, educators, enterprises, and lifelong learners test knowledge with ease.
 
-🔗 **Live Demo**: [quizmaster.dedyn.io](https://quizmaster.dedyn.io/)  
-💻 **GitHub Repo**: [github.com/ParthPatel00/QuizMaster](https://github.com/ParthPatel00/QuizMaster)
-
 ---
 
 ## 🚀 Overview
