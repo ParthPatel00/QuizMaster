@@ -1,131 +1,90 @@
 # QuizMaster
 
-QuizMaster is an AI-powered quiz generation platform that takes in PDF documents (e.g., notes or lecture slides) and produces customized multiple-choice quizzes. This guide explains how to set up the application locally for development and deploy it to the cloud.
----
-
-## Table of Contents
-
-- [Prerequisites](#prerequisites)
-- [Local Setup](#local-setup)
-- [Cloud Deployment](#cloud-deployment)
-- [Project Structure](#project-structure)
-- [Development Workflow](#development-workflow)
-- [Scripts](#scripts)
-- [Additional Resources](#additional-resources)
+AI-powered quiz generation from user-uploaded PDFs.  
+📚 Built to help students, educators, enterprises, and lifelong learners test knowledge with ease.
 
 ---
 
-## Prerequisites
+## 🚀 Overview
 
-- **Node.js** (v16 or later) and **npm** installed
-- For authentication, a configured [Firebase](https://firebase.google.com/docs) project
-- (Optional) AWS CLI configured if deploying to AWS
+**QuizMaster** is an AI-driven web application that allows users to upload PDF documents—lecture slides, textbooks, articles—and receive personalized quizzes in return. The platform instantly grades answers and offers feedback, supporting repeated attempts and long-term quiz storage.
 
 ---
 
-## Local Setup
+## 🎯 Key Features
 
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/ParthPatel00/QuizMaster.git
-   ```
-
-2. **Install dependencies for the frontend:**
-
-   ```bash
-   cd frontend
-   npm install
-   ```
-
-3. **Start the development server:**
-
-   ```bash
-   npm run dev
-   ```
-
-   The application will be available at [http://localhost:3000](http://localhost:3000).
+- ✨ Upload any **PDF** (≤ 5MB) and generate custom quizzes instantly
+- 🤖 Powered by **Gemini LLM** for content-aware quiz creation
+- ✅ **Auto-grading** with visual feedback (green = correct, red = incorrect)
+- 🔐 **Authentication via Firebase** (Google login or email/password)
+- 📂 **Persistent storage** of past quizzes for signed-in users
+- 🔁 **Retake** and reuse quizzes to reinforce learning
+- 🧪 Tested with **Vitest** and built using **Agile methodology**
 
 ---
 
-## Cloud Deployment
+## 🧑‍💻 Tech Stack
 
-### Using AWS CodeDeploy
-
-- The repository contains an `appspec.yml` file along with several bash scripts located in the `scripts` folder:
-  - **clean_old.sh:** Clears old deployment files.
-  - **deploy.sh:** Installs dependencies, builds the frontend, and copies the production files.
-  - **build_frontend.sh:** Installs dependencies, builds assets, and deploys them.
-  - **restart_nginx.sh:** Restarts Nginx to serve the updated build.
-- Ensure your target server (e.g., Ubuntu) has Node.js, npm, and Nginx installed and that AWS CodeDeploy is properly configured.
-- Deployment steps (executed by CodeDeploy) include cleaning, deploying, building, and restarting Nginx.
-
-## Project Structure
-
-- **frontend/**  
-  Contains the React + TypeScript client application.
-  - `src/`: Application source code (pages, components, services, hooks).
-  - `vite.config.ts`: Vite configuration.
-  - `package.json`: Frontend dependency and script definitions.
-  
-- **scripts/**  
-  Contains bash scripts for deployment:
-  - `clean_old.sh`
-  - `deploy.sh`
-  - `build_frontend.sh`
-  - `restart_nginx.sh`
-
-- **appspec.yml**  
-  AWS CodeDeploy configuration file.
-
-- **LambdaFunctions/**  
-  Placeholder for AWS Lambda functions.
-
-- **Non-technical/**  
-  Contains non-technical project documents and collaboration links.
+| Layer        | Technologies Used                                                                 |
+|--------------|------------------------------------------------------------------------------------|
+| **Frontend** | React, TypeScript, Tailwind CSS                                                   |
+| **Backend**  | AWS Lambda, API Gateway                                                           |
+| **LLM**      | Google Gemini                                                                     |
+| **Storage**  | Amazon S3 (PDFs), DynamoDB (quiz metadata)                                        |
+| **Auth**     | Firebase Authentication (Google/email login)                                     |
+| **CI/CD**    | GitHub Actions, AWS CodePipeline, CodeDeploy, EC2 (Nginx reverse proxy + SSL)    |
+| **Testing**  | Vitest                                                                             |
 
 ---
 
-## Development Workflow
+## 🧭 Architecture
 
-- **Coding:** Modify components in `frontend/src/` as needed.
-- **Testing:** Use your IDE and browser for live development with HMR.
-- **Linting:** Check your code with:
+![Architecture Diagram](https://github.com/ParthPatel00/QuizMaster/assets/architecture.png) <!-- Replace with actual image link if desired -->
 
-  ```bash
-  npm run lint
-  ```
-
-- **Production Build:** Create a production build using:
-
-  ```bash
-  npm run build
-  ```
-
-- **Deployment:** Cloud deployment runs the scripts in `/scripts` as defined in `appspec.yml`
+**Workflow Summary**:
+1. User uploads a PDF → stored in **S3**
+2. Triggered **Lambda** parses the file and sends prompt to **Gemini**
+3. Gemini responds with JSON quiz → stored in **DynamoDB**
+4. Frontend polls DynamoDB using **API Gateway** until quiz is ready
+5. UI renders questions; user attempts and receives feedback
 
 ---
 
-## Scripts
+## 🧪 Testing Highlights
 
-- **Local development:** `npm run dev`
-- **Build production assets:** `npm run build`
-- **Deployment Scripts:**  
-  Executed during CI/CD:
-  - `clean_old.sh` cleans previous deployments.
-  - `deploy.sh` installs and deploys the build.
-  - `build_frontend.sh` builds and copies files to the server.
-  - `restart_nginx.sh` restarts the Nginx server.
+Used **Vitest** to test:
+- File upload constraints
+- Error handling (e.g., invalid file type or missing name)
+- DynamoDB GET operations
+- Exponential polling retries when quiz generation is pending
 
----
-
-## Additional Resources
-
-- [Vite Documentation](https://vitejs.dev/)
-- [React Documentation](https://reactjs.org/)
-- [Firebase Documentation](https://firebase.google.com/docs)
-- [AWS CodeDeploy Documentation](https://docs.aws.amazon.com/codedeploy/latest/userguide/deployments.html)
+> Run locally with: `npx vitest`
 
 ---
 
-Happy coding!
+## ⚙️ Deployment
+
+- Deployed on **AWS EC2** (Ubuntu, Nginx, SSL via Certbot)
+- Configured **domain name**: `quizmaster.dedyn.io`
+- CI/CD pipeline using **GitHub → CodePipeline → CodeDeploy**
+- Scripts automate full lifecycle: clean build, install, deploy, restart
+
+---
+
+## 🧠 Engineering Challenges
+
+- **Prompt engineering** to handle noisy, diverse PDF input
+- **Exponential polling** to sync with async LLM response times
+- **State persistence** with conditional flows (auth vs guest mode)
+- **Security**: authenticated access to saved content, API authorization
+- **Cost-efficiency**: leveraged AWS free tier + serverless architecture
+
+---
+
+## 📌 Future Enhancements
+
+- Support for larger file sizes
+- Enhanced quiz formats (short answer, drag-and-drop)
+- Admin analytics dashboard
+- AI-based question quality evaluation
+- Real-time collaboration & multiplayer quiz mode
